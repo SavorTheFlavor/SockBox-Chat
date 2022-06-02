@@ -1,0 +1,76 @@
+html, body {
+    height: 98%;
+}
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #303030;
+    color: white;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+img {
+    max-width: 500px;
+    max-height: 500px;
+}
+
+
+.top-bar {
+    padding: 10px 2%;
+    margin-bottom: 5%;
+    width: 96%;
+    background-color: rgb(30, 30, 30);
+}
+.top-bar input {
+    border: none;
+}
+.top-bar #user-color {
+    height: 18px;
+    background-color: transparent;
+}
+
+.chat {
+    height : 100%;
+    overflow: auto;
+}
+.chat .message {
+    margin-bottom: 4%;
+}
+
+.chat .message .contents {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: rgb(30, 30, 30);
+    border-radius: 5px;
+    margin-left: 2%;
+    padding: 5px;
+    max-width: fit-content;
+}
+
+
+.input {
+    display: flex;
+
+}
+.input input {
+    border : none;
+    border-radius: 5px;
+    width: 100%;
+    padding: 1.5% 5px;
+    margin-right: 2px;
+    background-color: #505050;
+}
+.input button {
+    transition: 0.5s;
+    border: none;
+    border-radius: 5px;
+    margin: 0px 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: rgb(103, 131, 131);
+}
+.input button:hover {
+    background-color: rgb(136, 207, 207);
+}

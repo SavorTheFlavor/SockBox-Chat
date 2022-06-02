@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="script.js">
+        <title>Chat client</title>
+    </head>
+    <body>
+        <div class="top-bar">
+            Display name: <input type="text" id="name-set">
+            <input type="color" id="user-color">
+        </div>
+
+        <div class="chat">
+
+            <span id="Messages"></span>            
+
+        </div>
+        <div class="input">
+            <input type="text" id='message-set'>
+            <button id="File">File</button>
+            <button id="Send" onclick="getMessage()">Send</button>
+        </div>
+
+        <script>
+            messages = []
+            messages_html = ""
+
+            function getMessage() {
+                if(document.getElementById('message-set').value != '' && document.getElementById('name-set').value != '') {
+                    let name = document.getElementById('name-set').value;
+                    let userColor = document.getElementById('user-color').value;
+                    let message = document.getElementById('message-set').value;
+                    let timestamp = '5:00AM'
+
+                    messages.push({'user': name, 'contents': message, 'timestamp': timestamp, 'color':userColor})
+                    console.log(messages)
+                    document.getElementById('message-set').value = ''
+                    arrayToHTML(name, userColor, message)
+                }
+            }
+
+            function arrayToHTML(name, userColor, contents) {
+                let message_index = messages[messages.length -1]
+                msg_html = ''
+                msg_html =  "<div class='message'> <div class='name' style='color:"+userColor+"'>"+name+"</div> <div class='contents'>"+contents+"</div> </div>"
+
+                messages_html += msg_html
+                console.log(msg_html)
+                for(let i=0; i<msg_html.length; i++) {
+                    document.getElementById("Messages").innerHTML = messages_html
+                }
+            }
+        </script>
+
+    </body>
+</html>
