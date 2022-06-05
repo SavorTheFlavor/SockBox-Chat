@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "express": "^4.15.2",
+    "local-ipv4-address": "^0.0.2",
+    "socket.io": "^4.5.1",
+    "socket.io-client": "^4.5.1"
+  },
+  "name": "sockbox",
+  "version": "1.0.0",
+  "description": "NodeJS and Socketio chat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

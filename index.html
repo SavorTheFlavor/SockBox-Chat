@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="script.js">
-        <title>Chat client</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="/socket.io/socket.io.js"></script>
     </head>
     <body>
-        <div class="top-bar">
+        <div id="top-bar" class="top-bar">
             Display name: <input type="text" id="name-set">
             <input type="color" id="user-color">
         </div>
@@ -16,42 +15,164 @@
             <span id="Messages"></span>            
 
         </div>
-        <div class="input">
+        <div id="input" class="input">
             <input type="text" id='message-set'>
             <button id="File">File</button>
             <button id="Send" onclick="getMessage()">Send</button>
         </div>
 
         <script>
-            messages = []
-            messages_html = ""
+            // Variables
+            var socket = io()
+            var send = document.getElementById('Send')
+            var message_input = document.getElementById('message-set')
+            var name_input = document.getElementById('name-set')
+            var color_input = document.getElementById('user-color')
 
-            function getMessage() {
-                if(document.getElementById('message-set').value != '' && document.getElementById('name-set').value != '') {
-                    let name = document.getElementById('name-set').value;
-                    let userColor = document.getElementById('user-color').value;
-                    let message = document.getElementById('message-set').value;
-                    let timestamp = '5:00AM'
+            
+            // Send message and information to backend
+            send.addEventListener('click', function(e){
+                if(document.getElementById('message-set').value != '' && document.getElementById('name-set').value != ''){
+                    e.preventDefault();
+                    let contents = message_input.value
+                    let name = name_input.value
+                    let userColor = color_input.value
+                    let timestamp = getTime()
 
-                    messages.push({'user': name, 'contents': message, 'timestamp': timestamp, 'color':userColor})
-                    console.log(messages)
-                    document.getElementById('message-set').value = ''
-                    arrayToHTML(name, userColor, message)
+                    socket.emit('message-event', contents, name, userColor, timestamp)
+
+                    message_input.value = ''
+                } else {alert('Need a display name and message')}
+            })
+
+            // On enter, press the 'Send' button
+            message_input.addEventListener("keypress", function(event) {
+                if(event.key == "Enter") {
+                    document.getElementById("Send").click();
                 }
+            })
+
+            // Update messages from backend
+            socket.on('update-messages', function(format_message) {
+                document.getElementById('Messages').innerHTML = format_message
+            })
+
+            // Get current time and format it
+            function getTime() {
+                // Creating a new time, and getting a date
+                let time = new Date().getTime();
+                let date = new Date(time).toString();
+
+                // Getting a string of the time
+                let timestring = date.split(' ')[4].split(':')
+
+                // Checking if hour is over 12, then adjusting and adding PM/AM
+                if(parseInt(timestring[0]) > 12) {
+                    timestring[0] = (parseInt(timestring[0]) -12).toString()
+                    timemark = 'PM'
+                } else {timemark = 'AM'}
+
+                // Formating the date + time
+                timestring = timestring[0] +':'+ timestring[1] + timemark
+                let timestamp = date.split(' ')[1] +'/'+ date.split(' ')[2] +' '+timestring;
+                return timestamp
             }
 
-            function arrayToHTML(name, userColor, contents) {
-                let message_index = messages[messages.length -1]
-                msg_html = ''
-                msg_html =  "<div class='message'> <div class='name' style='color:"+userColor+"'>"+name+"</div> <div class='contents'>"+contents+"</div> </div>"
-
-                messages_html += msg_html
-                console.log(msg_html)
-                for(let i=0; i<msg_html.length; i++) {
-                    document.getElementById("Messages").innerHTML = messages_html
-                }
+            // Mobile styles
+            if (navigator.userAgent.toLowerCase().match(/mobile/i)) {
+                document.getElementsByTagName('*')[0].style.fontSize = '150%'
+                document.getElementById('Messages').style.fontSize = '200%'
+                document.getElementById('top-bar').style.fontSize = '2.5pc'
+                document.getElementById('user-color').style.height='2.5pc'
+                document.getElementById('message-set').style.fontSize='3pc'
+                document.getElementById('timestamp').style.fontSize = '300%'
+                
             }
-        </script>
+            
 
+            </script>
+
+<style>
+    html, body {
+        height: 98%;
+    }
+    * {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 100%;
+        background-color: #303030;
+        color: white;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+    img {
+        max-width: 500px;
+        max-height: 500px;
+    }
+
+
+    .top-bar {
+        padding: 10px 2%;
+        margin-bottom: 2%;
+        width: 96%;
+        background-color: rgb(30, 30, 30);
+    }
+    .top-bar input {
+        border: none;
+    }
+    .top-bar #user-color {
+        height: 18px;
+        background-color: transparent;
+    }
+
+    .chat {
+        height : 100%;
+        overflow: auto;
+    }
+    .chat .message {
+        margin-bottom: 2%;
+    }
+
+    .chat .message .contents {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: rgb(30, 30, 30);
+        border-radius: 5px;
+        margin-left: 2%;
+        padding: 5px;
+        max-width: fit-content;
+    }
+    #timestamp {
+        font-size: 0.75pc;
+        margin-left: 2%;
+    }
+
+
+    .input {
+        display: flex;
+    }
+    .input input {
+        border : none;
+        border-radius: 5px;
+        width: 100%;
+        padding: 0.75pc 5px;
+        margin-right: 2px;
+        background-color: #505050;
+    }
+    .input button {
+        transition: 0.5s;
+        border: none;
+        border-radius: 5px;
+        margin: 0px 1px;
+        padding-left: 10px;
+        padding-right: 10px;
+        background-color: rgb(103, 131, 131);
+    }
+    .input button:hover {
+        background-color: rgb(136, 207, 207);
+    }
+</style>
     </body>
 </html>
